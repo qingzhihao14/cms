@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.cms.mapper.extend.ArticleExtendMapper">
+
+    <select id="count" resultType="long">
+        select count(*)
+        from cms_article
+    </select>
+
+    <!--pageSize:5
+       第1页： 0-4
+       第2页： 5-9
+       第3页： 10-12
+    -->
+    <select id="pageQuery" resultMap="ArticleExtendResultMap">
+         select a.*,
+          u.id as u_id,
+          u.username as u_username,
+          c.id as c_id,
+          c.name as c_name,
+          c.description as c_description,
+          c.create_time as c_create_time,
+          c.no as c_no,
+          c.parent_id as c_parent_id
+        from cms_article a left join cms_category c
+        on a.category_id=c.id
+        left join base_user u
+        on a.author_id=u.id
+        order by publish_time desc
+        limit ${(page-1)*pageSize},${pageSize}
+    </select>
+
+    <!--关联的两张表信息全查-->
+<!--    <select id="selectById" resultMap="ArticleExtendResultMap">
+        select a.*,
+              u.username as u_username,
+              c.name as c_name
+        from cms_article a left join cms_category c
+        on a.category_id=c.id
+        left join base_user u
+        on a.author_id=u.id
+        where a.id =#{id}
+    </select>-->
+    <select id="selectAllWithOther" resultMap="ArticleExtendResultMap">
+        select a.*,
+          u.id as u_id,
+          u.username as u_username,
+          c.id as c_id,
+          c.name as c_name,
+          c.description as c_description,
+          c.create_time as c_create_time,
+          c.no as c_no,
+          c.parent_id as c_parent_id
+        from cms_article a left join cms_category c
+        on a.category_id=c.id
+        left join base_user u
+        on a.author_id=u.id
+    </select>
+    <select id="selectById" resultMap="ArticleExtendResultMap">
+               select a.*,u.id as u_id,u.username as u_username,c.id as c_id,c.name as c_name,c.description as c_description,c.create_time as c_create_time,c.no as c_no,c.parent_id as c_parent_id
+        from cms_article a left join cms_category c
+        on a.category_id=c.id
+        left join base_user u
+        on a.author_id=u.id
+        where a.id =#{id}
+    </select>
+    <resultMap id="ArticleExtendResultMap"
+             extends="com.briup.apps.cms.mapper.ArticleMapper.BaseResultMap"
+             type="com.briup.apps.cms.bean.extend.ArticleExtend">
+    <association property="category" javaType="com.briup.apps.cms.bean.Category">
+        <result column="c_name" property="name"/>
+    </association>
+        <association property="author" javaType="com.briup.apps.cms.bean.User">
+            <result column="u_username" property="username"/>
+        </association>
+  </resultMap>
+
+</mapper>

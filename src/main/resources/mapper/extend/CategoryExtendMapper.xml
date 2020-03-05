@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.cms.mapper.extend.CategoryExtendMapper">
+
+  <select id="count" resultType="long">
+        select count(*)
+        from cms_category
+    </select>
+  <select id="pageQuery" resultMap="CategoryExtendResultMap">
+      SELECT *
+    FROM cms_category
+    limit ${(page-1)*pageSize},${pageSize}
+  </select>
+
+  <select id="selectAllWithParent" resultMap="CategoryExtendResultMap">
+    SELECT *
+    FROM cms_category
+  </select>
+
+  <!--1.懒人模式-->
+<!--  <resultMap id="CategoryExtendResultMap"
+             type="com.briup.apps.cms.bean.extend.CategoryExtend">
+    &lt;!&ndash;通过parent_id找到parent&ndash;&gt;
+    <association
+            property="parent"
+            column="parent_id"
+            select="com.briup.apps.cms.mapper.CategoryMapper.selectByPrimaryKey"></association>
+  </resultMap>-->
+  <!--2.-->
+  <!--这样，POJO类和映射结果集都对应了，两边都继承-->
+  <!--好处：可以在数据库里加列-->
+  <resultMap id="CategoryExtendResultMap"
+             extends="com.briup.apps.cms.mapper.CategoryMapper.BaseResultMap"
+             type="com.briup.apps.cms.bean.extend.CategoryExtend">
+    <!--基础属性已经被继承-->
+    <!--通过parent_id找到parent-->
+    <association
+            property="parent"
+            column="parent_id"
+            select="com.briup.apps.cms.mapper.CategoryMapper.selectByPrimaryKey"></association>
+  </resultMap>
+</mapper>

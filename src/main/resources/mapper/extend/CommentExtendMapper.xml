@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.briup.apps.cms.mapper.extend.CommentExtendMapper">
+
+    <select id="count" resultType="long">
+        select count(*)
+        from cms_comment
+    </select>
+    <select id="pageQuery" resultMap="CommentResultMap">
+      SELECT *
+    FROM cms_comment
+    limit ${(page-1)*pageSize},${pageSize}
+  </select>
+
+    <!--好处：可以在数据库里加列-->
+    <resultMap id="CommentResultMap"
+               extends="com.briup.apps.cms.mapper.CommentMapper.BaseResultMap"
+               type="com.briup.apps.cms.bean.extend.CommentExtend">
+        <!--基础属性已经被继承-->
+        <!--通过parent_id找到parent-->
+    </resultMap>
+</mapper>
